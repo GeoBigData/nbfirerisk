@@ -9,7 +9,7 @@ import pyproj
 from shapely import ops
 import json
 from rasterio import features
-from numpy import np
+import numpy as np
 import cPickle
 
 
