@@ -4,7 +4,7 @@ import folium
 from matplotlib import pyplot as plt, colors
 
 # CONSTANTS
-TMS_1040010039BAAF00 = 'https://s3.amazonaws.com/notebooks-small-tms/1040010039BAAF00/{z}/{x}/{y}.png'
+TMS_103001006E28F900 = 'https://s3.amazonaws.com/notebooks-small-tms/103001006E28F900/{z}/{x}/{y}.png'
 
 
 COLORS = {'gray'       : '#8F8E8E',
