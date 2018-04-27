@@ -8,4 +8,3 @@ scikit-image
 scipy
 pyproj
 rasterio
-cPickle
