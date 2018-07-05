@@ -1,7 +1,3 @@
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from past.utils import old_div
 from shapely.geometry import shape
 from shapely import geometry
 import requests
@@ -14,7 +10,7 @@ from shapely import ops
 import json
 from rasterio import features
 import numpy as np
-import pickle
+import cPickle
 
 
 # CONSTANTS
@@ -35,25 +31,25 @@ def calc_rsi(image):
     NIR1 = img[:, :, 6]
     NIR2 = img[:, :, 7]
 
-    arvi = old_div((NIR1 - (R - (B - R))), (NIR1 + (R - (B - R))))
+    arvi = (NIR1 - (R - (B - R))) / (NIR1 + (R - (B - R)))
     dd = (2 * NIR1 - R) - (G - B)
     gi2 = (B * -0.2848 + G * -0.2434 + R * -0.5436 + NIR1 * 0.7243 + NIR2 * 0.0840) * 5
-    gndvi = old_div((NIR1 - G), (NIR1 + G))
-    ndre = old_div((NIR1 - RE), (NIR1 + RE))
-    ndvi = old_div((NIR1 - R), (NIR1 + R))
-    ndvi35 = old_div((G - R), (G + R))
-    ndvi84 = old_div((NIR2 - Y), (NIR2 + Y))
-    nirry = old_div((NIR1), (R + Y))
-    normnir = old_div(NIR1, (NIR1 + R + G))
-    psri = old_div((R - B), RE)
-    rey = old_div((RE - Y), (RE + Y))
-    rvi = old_div(NIR1, R)
-    sa = old_div(((Y + R) * 0.35), 2) + old_div((0.7 * (NIR1 + NIR2)), 2) - 0.69
-    vi1 = old_div((10000 * NIR1), (RE) ** 2)
-    vire = old_div(NIR1, RE)
-    br = (old_div(R, B)) * (old_div(G, B)) * (old_div(RE, B)) * (old_div(NIR1, B))
-    gr = old_div(G, R)
-    rr = (old_div(NIR1, R)) * (old_div(G, R)) * (old_div(NIR1, RE))
+    gndvi = (NIR1 - G) / (NIR1 + G)
+    ndre = (NIR1 - RE) / (NIR1 + RE)
+    ndvi = (NIR1 - R) / (NIR1 + R)
+    ndvi35 = (G - R) / (G + R)
+    ndvi84 = (NIR2 - Y) / (NIR2 + Y)
+    nirry = (NIR1) / (R + Y)
+    normnir = NIR1 / (NIR1 + R + G)
+    psri = (R - B) / RE
+    rey = (RE - Y) / (RE + Y)
+    rvi = NIR1 / R
+    sa = ((Y + R) * 0.35) / 2 + (0.7 * (NIR1 + NIR2)) / 2 - 0.69
+    vi1 = (10000 * NIR1) / (RE) ** 2
+    vire = NIR1 / RE
+    br = (R / B) * (G / B) * (RE / B) * (NIR1 / B)
+    gr = G / R
+    rr = (NIR1 / R) * (G / R) * (NIR1 / RE)
 
     rsi = np.stack([arvi, dd, gi2, gndvi, ndre, ndvi, ndvi35, ndvi84, nirry, normnir, psri, rey, rvi,
                     sa, vi1, vire, br, gr, rr], axis=2)
@@ -63,7 +59,7 @@ def calc_rsi(image):
 
 def power(image, kernel):
     # Normalize images for better comparison.
-    image = old_div((image - image.mean()), image.std())
+    image = (image - image.mean()) / image.std()
     return np.sqrt(ndi.convolve(image, np.real(kernel), mode='wrap') ** 2 +
                    ndi.convolve(image, np.imag(kernel), mode='wrap') ** 2)
 
@@ -124,7 +120,7 @@ def delineate_fuel_reduction_zone(geom, inner_radius_m=9, outer_radius_m=30):
 
 def get_model(model_url):
     response = requests.get(model_url)
-    model = pickle.loads(response.content)
+    model = cPickle.loads(response.content)
 
     return model
 
@@ -203,15 +199,15 @@ def assess_tree_coverage(building_geom, live_tree_polys, dead_tree_polys):
     dead_tree_polys_defensible_area = [poly for poly in dead_tree_polys if defensible_area_geom.intersects(poly)]
     dead_tree_polys_fuel_area = [poly for poly in dead_tree_polys if fuel_area_geom.intersects(poly)]
 
-    defensible_area_pct_live_trees = old_div(np.sum([defensible_area_geom.intersection(poly).area for poly in
-                                             live_tree_polys_defensible_area]), defensible_area_geom.area)
-    defensible_area_pct_dead_trees = old_div(np.sum([defensible_area_geom.intersection(poly).area for poly in
-                                             dead_tree_polys_defensible_area]), defensible_area_geom.area)
+    defensible_area_pct_live_trees = np.sum([defensible_area_geom.intersection(poly).area for poly in
+                                             live_tree_polys_defensible_area]) / defensible_area_geom.area
+    defensible_area_pct_dead_trees = np.sum([defensible_area_geom.intersection(poly).area for poly in
+                                             dead_tree_polys_defensible_area]) / defensible_area_geom.area
 
-    fuel_area_pct_live_trees = old_div(np.sum([fuel_area_geom.intersection(poly).area for poly in
-                                       live_tree_polys_fuel_area]), fuel_area_geom.area)
-    fuel_area_pct_dead_trees = old_div(np.sum([fuel_area_geom.intersection(poly).area for poly in
-                                       dead_tree_polys_fuel_area]), fuel_area_geom.area)
+    fuel_area_pct_live_trees = np.sum([fuel_area_geom.intersection(poly).area for poly in
+                                       live_tree_polys_fuel_area]) / fuel_area_geom.area
+    fuel_area_pct_dead_trees = np.sum([fuel_area_geom.intersection(poly).area for poly in
+                                       dead_tree_polys_fuel_area]) / fuel_area_geom.area
 
     results = {'defensible_area_pct_live_trees': round(defensible_area_pct_live_trees * 100, 1),
                'defensible_area_pct_dead_trees': round(defensible_area_pct_dead_trees * 100, 1),
