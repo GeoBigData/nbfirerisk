@@ -15,7 +15,7 @@ import json
 from rasterio import features
 import numpy as np
 import pickle
-
+import sys
 
 # CONSTANTS
 ecopia_buildings_shaver_lake = 'https://s3.amazonaws.com/gbdx-training/defensible_area/ecopia_footprints_shaver_lake.geojson'
@@ -248,14 +248,25 @@ def from_geojson(source):
 
 
 def to_geojson(l):
-    g = {'crs'     : {u'properties': {u'name': u'urn:ogc:def:crs:OGC:1.3:CRS84'}, 'type': 'name'},
+    g = {'crs': {u'properties': {u'name': u'urn:ogc:def:crs:OGC:1.3:CRS84'}, 'type': 'name'},
          'features': [{'geometry': d['geometry'].__geo_interface__, 'properties': d['properties'], 'type': 'Feature'}
                       for d in l],
-         'type'    : u'FeatureCollection'}
+         'type': u'FeatureCollection'}
 
-    gj = json.dumps(g)
+    if sys.version_info[0] == 3:
+        serializer = np_serializer
+    else:
+        serializer = None
+
+    gj = json.dumps(g, default=serializer)
 
     return gj
+
+
+def np_serializer(i):
+    if type(i).__module__ == np.__name__:
+        return np.asscalar(i)
+    raise TypeError(repr(i) + " is not JSON serializable")
 
 
 def geom_to_array(geom, img, geom_val=1, fill_value=0, all_touched=True, exterior_only=False):
