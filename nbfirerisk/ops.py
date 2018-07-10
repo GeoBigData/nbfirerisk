@@ -126,9 +126,11 @@ def delineate_fuel_reduction_zone(geom, inner_radius_m=9, outer_radius_m=30):
 def get_model(model_url):
     response = requests.get(model_url)
     if sys.version_info[0] == 2:
-        model = cPickle.loads(response.content)
+        pickle_opts = {}
     else:
-        model = pickle.loads(response.content, encoding='latin1')
+        pickle_opts = {'encoding': 'latin1'}
+
+    model = pickle.loads(response.content, **pickle_opts)
 
     return model
 
