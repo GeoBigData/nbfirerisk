@@ -15,7 +15,6 @@ import json
 from rasterio import features
 import numpy as np
 import pickle
-import cPickle
 import sys
 
 # CONSTANTS
