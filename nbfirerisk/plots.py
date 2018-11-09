@@ -6,6 +6,7 @@ import pandas as pd
 
 # CONSTANTS
 TMS_103001006E28F900 = 'https://s3.amazonaws.com/notebooks-small-tms/103001006E28F900/{z}/{x}/{y}.png'
+TMS_1030010082740C00 = 'https://s3.amazonaws.com/notebooks-small-tms/1030010082740C00/{z}/{x}/{y}.png'
 
 
 COLORS = {'gray'       : '#8F8E8E',

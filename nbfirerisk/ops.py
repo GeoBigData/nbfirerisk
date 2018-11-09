@@ -22,6 +22,8 @@ warnings.simplefilter("ignore", UserWarning)
 # CONSTANTS
 ecopia_buildings_shaver_lake = 'https://s3.amazonaws.com/gbdx-training/defensible_area/ecopia_footprints_shaver_lake.geojson'
 tree_detection_model = 'https://s3.amazonaws.com/gbdx-training/defensible_area/tree_detection_rf_model.pkl'
+ecopia_buildings_boulder = 'https://s3.amazonaws.com/gbdx-training/defensible_area/ecopia_footprints_boulder.geojson'
+tree_detection_model_boulder = 'https://s3.amazonaws.com/gbdx-training/defensible_area/tree_detection_rf_model_boulder.pkl'
 
 # FUNCTIONS
 def calc_rsi(image):
