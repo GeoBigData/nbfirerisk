@@ -43,7 +43,8 @@ def folium_map(geojson_to_overlay, layer_name, location, style_function=None, ti
                zoom_beyond_max=None, base_tiles='OpenStreetMap', opacity=1):
     m = folium.Map(location=location, zoom_start=zoom_start, width=width, height=height, max_zoom=map_zoom,
                    tiles=base_tiles)
-    tiles = folium.TileLayer(tiles=tiles, attr=attr, name=attr, max_zoom=max_zoom)
+    tiles = folium.TileLayer(tiles=tiles, attr=attr, name=attr, max_zoom=max_zoom,
+                             active=True)
     if tms is True:
         options = json.loads(tiles.options)
         options.update({'tms': True})

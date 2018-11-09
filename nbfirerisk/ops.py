@@ -154,7 +154,7 @@ def find_all_trees(chip, tree_model, segments_per_m2=0.04, return_segments=False
     predictions_2d = predictions.reshape(chip.shape[1], chip.shape[2])
 
     # segment the image
-    chip_area_m2 = chip.shape[1] * chip.shape[2] * chip.ipe.metadata['image']['groundSampleDistanceMeters'] ** 2
+    chip_area_m2 = chip.shape[1] * chip.shape[2] * chip.rda.metadata['image']['groundSampleDistanceMeters'] ** 2
     n_segments = int(round(chip_area_m2 * segments_per_m2))
     chip_segmented = segmentation.slic(chip.rgb(), n_segments=n_segments, max_iter=100)
 
