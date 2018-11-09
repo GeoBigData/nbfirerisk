@@ -16,6 +16,8 @@ from rasterio import features
 import numpy as np
 import pickle
 import sys
+import warnings
+warnings.simplefilter("ignore", UserWarning)
 
 # CONSTANTS
 ecopia_buildings_shaver_lake = 'https://s3.amazonaws.com/gbdx-training/defensible_area/ecopia_footprints_shaver_lake.geojson'
