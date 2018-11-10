@@ -175,6 +175,15 @@ def find_all_trees(chip, tree_model, segments_per_m2=0.04, return_segments=False
     return trees
 
 
+def extract_trees(chip, tree_model, segments_per_m2=0.04):
+
+    # run the initial segmentation to find trees
+    trees_array = find_all_trees(chip, tree_model, segments_per_m2, return_segments=False)
+    tree_polygons = labels_to_polygons(trees_array, chip.affine)
+
+    return tree_polygons
+
+
 def segment_live_dead_trees(chip, tree_model, ndvi, segments_per_m2=0.04, return_geometries=False):
     # run the initial segmentation to find trees
     tree_segments = find_all_trees(chip, tree_model, segments_per_m2, return_segments=True)
@@ -233,6 +242,29 @@ def assess_tree_coverage(building_geom, live_tree_polys, dead_tree_polys):
                                                 results['fuel_area_pct_dead_trees']), 1)
 
     return results
+
+
+def assess_tree_coverage_simple(building_geom, tree_polys):
+    # delineate the defensible are and fuel zones
+    defensible_area_geom = delineate_defensible_area(building_geom)
+    fuel_area_geom = delineate_fuel_reduction_zone(building_geom)
+
+    # limit to the polys that intersect these features
+    tree_polys_defensible_area = [poly for poly in tree_polys if defensible_area_geom.intersects(poly)]
+    tree_polys_fuel_area = [poly for poly in tree_polys if fuel_area_geom.intersects(poly)]
+
+    defensible_area_pct_trees = old_div(np.sum([defensible_area_geom.intersection(poly).area for poly in
+                                                tree_polys_defensible_area]), defensible_area_geom.area)
+
+    fuel_area_pct_trees = old_div(np.sum([fuel_area_geom.intersection(poly).area for poly in
+                                          tree_polys_fuel_area]), fuel_area_geom.area)
+
+    results = {'defensible_area_pct_trees': round(defensible_area_pct_trees * 100, 1),
+               'fuel_area_pct_trees'      : round(fuel_area_pct_trees * 100, 1)
+               }
+
+    return results
+
 
 
 def from_geojson(source):
