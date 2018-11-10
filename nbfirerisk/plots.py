@@ -1,7 +1,8 @@
 import jinja2
 import json
 import folium
-from matplotlib import pyplot as plt, colors
+from matplotlib import pyplot as plt, colors, cm
+from matplotlib.colors import ListedColormap
 import pandas as pd
 
 # CONSTANTS
@@ -18,6 +19,7 @@ COLORS = {'gray'       : '#8F8E8E',
           'pink'       : '#F30EFE'}
 
 
+trees_cmap = ListedColormap([(0.0, 0.0, 1.0, 0), (0.0, 1.0, 1.0, 0.4)])
 
 # FUNCTIONS
 def footprints_outline_styler(x):
@@ -30,6 +32,13 @@ def footprints_outline_styler(x):
 def footprints_risk_styler(x):
     return {'fillColor'  : COLORS['gray'],
             'color'      : COLORS['red'] if x['properties']['high_risk'].lower() == 'true' else COLORS['brightgreen'],
+            'fillOpacity': 0,
+            'weight'     : 2}
+
+
+def tree_coverage_styler(x):
+    return {'fillColor'  : COLORS['gray'],
+            'color'      : colors.rgb2hex(cm.RdYlBu_r(x['properties']['defensible_area_pct_trees'] / 100.)[:3]),
             'fillOpacity': 0,
             'weight'     : 2}
 
