@@ -282,7 +282,8 @@ def from_geojson(source):
     feats = []
     for f in geojson['features']:
         geom = geometry.shape(f['geometry'])
-        feats.append({'geometry': geom, 'properties': {}})
+        props = f['properties']
+        feats.append({'geometry': geom, 'properties': props})
         geometries.append(geom)
 
     return geometries, feats
