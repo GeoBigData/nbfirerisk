@@ -24,6 +24,7 @@ ecopia_buildings_shaver_lake = 'https://s3.amazonaws.com/gbdx-training/defensibl
 tree_detection_model = 'https://s3.amazonaws.com/gbdx-training/defensible_area/tree_detection_rf_model.pkl'
 ecopia_buildings_boulder = 'https://s3.amazonaws.com/gbdx-training/defensible_area/ecopia_footprints_boulder.geojson'
 tree_detection_model_boulder = 'https://s3.amazonaws.com/gbdx-training/defensible_area/tree_detection_rf_model_boulder.pkl'
+ecopia_buildings_lake_keswick = 'https://s3.amazonaws.com/gbdx-training/Lake_Keswick_Estates_footprints/Lake_Keswick_Estates_footprints.shp'
 
 # FUNCTIONS
 def calc_rsi(image):
